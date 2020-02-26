@@ -123,3 +123,19 @@ Now we're getting a bit more serious.
 As with any application, its up to you to make decisions about how to implement various things in the code. For this example, I've chosen to store the current page in the todo list state. It also would have been fine to store the current page in the Pagination components state too. I chose to put it in the todo list because the `TodoList` component is already a `class` (where `Pagination` is still a `function`) and it felt like it made sense to me to put it there while I was doing it. Its up to you to decide what works best for you and your team.
 
 For starters, instead of manually writing out a bunch of items, I've created a simple item generator that spits out a bunch of randomly named items. Then I added `pageCount` and `onSwitchPage` props to the `Pagination` component to give it the variables it requires to handle stepping forwards and backwards through the pages. Finally I added the logic in the `TodoList` to split the full list of items into page-sized chunks. Since the page size is just a static value I chose to make it a field in the TodoList class, but it could just as easily be passed in as a prop. This would make sense if you wanted the user to be able to pick the page size themselves.
+
+### Ajax
+
+You thought we were serious before...
+
+To help with the example, I've created a dummy `ItemService` with a handful of functions. Each one returns a promise which returns the return value of the function after 1 second. This is an approximation for running a real `fetch` request.
+
+`TodoItem` now takes a `disabled` prop which is passed to the input element, we use this to disable the input while the list is loading. The `onChange` event is also unbound while the input is disabled. This isn't necessary but I thought it was a bit neater than having a change event bound to a disabled item.
+
+The initial list of items passed to `TodoList` has also now been replaced by the `ItemService`, and the functions that manipulated `this.state.items` now call methods on the `ItemService`.
+
+A few state properties have also been added to represent the "loading" state of the list, and individual items.
+
+The first load of items is triggered by the `componentDidMount` event which is called by react once the component is ready to start receiving state changes.
+
+I think its important to see that these functions only manipulate the state, and the render method now does very little processing, it just takes the current state and turns it into some nice html.

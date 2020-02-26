@@ -1,13 +1,11 @@
 import * as React from 'react';
 import TodoItem from './TodoItem';
 import Pagination from './Pagination';
+import ItemService from '../ItemService';
 
 export interface TodoListProps {
 	title: string;
-	initialItems: {
-		label: string;
-		checked: boolean;
-	}[];
+	itemService: ItemService;
 }
 
 export interface TodoListState {
@@ -15,7 +13,13 @@ export interface TodoListState {
 		label: string;
 		checked: boolean;
 	}[];
+	itemsLoading: {
+		[item: string]: boolean;
+	};
 	page: number;
+	pageCount: number;
+	loading: boolean;
+	uncheckedItemCount: number;
 }
 
 export default class TodoList extends React.Component<
@@ -24,8 +28,12 @@ export default class TodoList extends React.Component<
 > {
 	//Initialize the state based on the props
 	state = {
-		items: this.props.initialItems.map(item => ({ ...item })),
+		items: [],
+		itemsLoading: {},
 		page: 1,
+		pageCount: 1,
+		loading: true,
+		uncheckedItemCount: 0,
 	};
 
 	// Convert the title into something we can use in an ID attribute
@@ -33,59 +41,140 @@ export default class TodoList extends React.Component<
 	pageSize = 7;
 
 	toggleItem(label: string) {
-		let changed = false;
-
-		const newTodoList = this.state.items.map(item => {
-			if (item.label === label) {
-				changed = true;
-				return {
-					label: item.label,
-					checked: !item.checked,
-				};
-			} else {
-				return item;
-			}
+		// Set the loading state
+		this.setState({
+			...this.state,
+			itemsLoading: {
+				...this.state.itemsLoading,
+				[label]: true,
+			},
 		});
 
-		if (changed) {
-			this.setState({
-				items: [...newTodoList],
+		// Run the ajax request
+		this.props.itemService
+			.toggleItem(label)
+			.then(result => {
+				if (result.success) {
+					// Update the local state with the results of the ajax request
+					this.setState({
+						...this.state,
+
+						// Toggle any checkboxes locally rather than doing a full refresh
+						items: this.state.items.map(item => {
+							if (item.label === label) {
+								return {
+									label: item.label,
+									checked: !item.checked,
+								};
+							} else {
+								return item;
+							}
+						}),
+
+						// Update the unchecked item count based on weather or not this item is now checked
+						uncheckedItemCount:
+							this.state.uncheckedItemCount +
+							(result.checked ? -1 : 1),
+
+						// Clear the loading status of the item
+						itemsLoading: {
+							...this.state.itemsLoading,
+							[label]: false,
+						},
+					});
+				} else {
+					throw new Error('Ajax request failed');
+				}
+			})
+			.catch(e => {
+				console.error(e);
+				this.setState({
+					...this.state,
+
+					// Clear the loading status of the item
+					itemsLoading: {
+						...this.state.itemsLoading,
+						[label]: false,
+					},
+				});
 			});
-		}
 	}
 
 	switchToPage(page: number) {
+		// Set the loading status
 		this.setState({
 			...this.state,
-			page,
+			loading: true,
 		});
+
+		this.props.itemService.getItemsByPage(page, this.pageSize).then(
+			data => {
+				this.setState({
+					...this.state,
+					items: data.items,
+					pageCount: data.pageCount,
+					page: page,
+					uncheckedItemCount: data.uncheckedItems,
+
+					// Clear the loading status
+					loading: false,
+					itemsLoading: {},
+				});
+			},
+			e => {
+				console.error(e);
+
+				this.setState({
+					...this.state,
+					// Clear the loading status
+					loading: false,
+					itemsLoading: {},
+				});
+			}
+		);
+	}
+
+	componentDidMount() {
+		this.refresh();
+	}
+
+	refresh() {
+		this.switchToPage(this.state.page);
 	}
 
 	render() {
 		const { title } = this.props;
-		const { items, page } = this.state;
+		const {
+			loading,
+			items,
+			page,
+			pageCount,
+			uncheckedItemCount,
+			itemsLoading,
+		} = this.state;
 
-		const uncheckedItemCount = items.filter(item => !item.checked).length;
 		const s = uncheckedItemCount === 1 ? '' : 's';
-
-		const pageCount = Math.ceil(items.length / this.pageSize);
-		const thisPageItems = items.slice(
-			(page - 1) * this.pageSize,
-			page * this.pageSize
-		);
 
 		return (
 			<div className="todo-list">
 				<p className="todo-list__title">
-					{title} ({uncheckedItemCount} item{s})
+					{title}{' '}
+					{loading ? (
+						<>(loading)</>
+					) : (
+						<>
+							({uncheckedItemCount} item{s})
+						</>
+					)}
 				</p>
 				<ul className="todo-list__items">
-					{thisPageItems.map((item, index) => (
+					{items.map((item, index) => (
 						<li className="todo-list__item">
 							<TodoItem
 								id={`${this.id}__Item-${index}`}
 								label={item.label}
 								checked={item.checked}
+								disabled={loading || itemsLoading[item.label]}
 								onChange={() => this.toggleItem(item.label)}
 							/>
 						</li>

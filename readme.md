@@ -18,3 +18,8 @@ yarn add react @types/react react-dom @types/react-dom
 ```
 
 Add gitignore for `node_modules`
+
+### Add a test src file and a prettier config
+
+Create `src/main.ts`
+Create `.prettierrc`

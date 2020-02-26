@@ -139,3 +139,13 @@ A few state properties have also been added to represent the "loading" state of 
 The first load of items is triggered by the `componentDidMount` event which is called by react once the component is ready to start receiving state changes.
 
 I think its important to see that these functions only manipulate the state, and the render method now does very little processing, it just takes the current state and turns it into some nice html.
+
+### List Keys
+
+I was planning to go through this at some stage but the opportunity didn't present itself.
+
+Whenever you have a list of items in react, its important to make sure each one is given a unique key. The key is used to work out if an item has _changed_ or if it is actually a _different_ item than before. So for the list of `TodoItem`s I've added a `key` prop to the `<li>` and set it to the items index in the list.
+
+The side effect of this is negligible in this case, but what it means is that the first item on every page will reuse the same DOM elements, as will the second, and third, and so on, rather than creating new DOM elements for each item.
+
+This distinction can be a real pain if you're not aware of it, especially when you've got some other things going on with those elements outside of react, like jquery-bound events, or `<input type="file">` elements whose value cannot be changed by scripts. Having react reuse one upload input for another will definitely cause you some headaches, so its important to choose keys carefully and consistently, so that each one can be uniquely identified by it.

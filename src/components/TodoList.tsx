@@ -169,7 +169,7 @@ export default class TodoList extends React.Component<
 				</p>
 				<ul className="todo-list__items">
 					{items.map((item, index) => (
-						<li className="todo-list__item">
+						<li className="todo-list__item" key={index}>
 							<TodoItem
 								id={`${this.id}__Item-${index}`}
 								label={item.label}

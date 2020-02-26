@@ -12,7 +12,7 @@ const appProps: AppProps = {
 	title: 'My React App',
 	todoList: {
 		title: 'My Todo List',
-		items: [
+		initialItems: [
 			{
 				label: 'First Item',
 				checked: false,

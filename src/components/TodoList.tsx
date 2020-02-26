@@ -4,35 +4,53 @@ import Pagination from './Pagination';
 
 export interface TodoListProps {
 	title: string;
+	initialItems: {
+		label: string;
+		checked: boolean;
+	}[];
+}
+
+export interface TodoListState {
 	items: {
 		label: string;
 		checked: boolean;
 	}[];
 }
 
-const TodoList = (props: TodoListProps) => {
+export default class TodoList extends React.Component<
+	TodoListProps,
+	TodoListState
+> {
+	//Initialize the state based on the props
+	state = {
+		items: this.props.initialItems.map(item => ({ ...item })),
+	};
+
 	// Convert the title into something we can use in an ID attribute
-	const id = props.title.replace(/[^a-zA-Z0-9]+/g, '-');
+	id = this.props.title.replace(/[^a-zA-Z0-9]+/g, '-');
 
-	return (
-		<div className="todo-list">
-			<p className="todo-list__title">{props.title}</p>
-			<ul className="todo-list__items">
-				{props.items.map((item, index) => (
-					<li className="todo-list__item">
-						<TodoItem
-							id={`${id}__Item-${index}`}
-							label={item.label}
-							checked={item.checked}
-						/>
-					</li>
-				))}
-			</ul>
-			<div className="todo-list__pagination">
-				<Pagination page={1} />
+	render() {
+		const { title } = this.props;
+		const { items } = this.state;
+
+		return (
+			<div className="todo-list">
+				<p className="todo-list__title">{title}</p>
+				<ul className="todo-list__items">
+					{items.map((item, index) => (
+						<li className="todo-list__item">
+							<TodoItem
+								id={`${this.id}__Item-${index}`}
+								label={item.label}
+								checked={item.checked}
+							/>
+						</li>
+					))}
+				</ul>
+				<div className="todo-list__pagination">
+					<Pagination page={1} />
+				</div>
 			</div>
-		</div>
-	);
-};
-
-export default TodoList;
+		);
+	}
+}

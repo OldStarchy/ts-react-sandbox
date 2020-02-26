@@ -115,3 +115,11 @@ Its important to know that a component state is immutable, so instead of just up
 ### Show Unchecked Item Count
 
 Just for fun I thought it would be a good idea to show the unchecked item count in the todo list title.
+
+### Pagination
+
+Now we're getting a bit more serious.
+
+As with any application, its up to you to make decisions about how to implement various things in the code. For this example, I've chosen to store the current page in the todo list state. It also would have been fine to store the current page in the Pagination components state too. I chose to put it in the todo list because the `TodoList` component is already a `class` (where `Pagination` is still a `function`) and it felt like it made sense to me to put it there while I was doing it. Its up to you to decide what works best for you and your team.
+
+For starters, instead of manually writing out a bunch of items, I've created a simple item generator that spits out a bunch of randomly named items. Then I added `pageCount` and `onSwitchPage` props to the `Pagination` component to give it the variables it requires to handle stepping forwards and backwards through the pages. Finally I added the logic in the `TodoList` to split the full list of items into page-sized chunks. Since the page size is just a static value I chose to make it a field in the TodoList class, but it could just as easily be passed in as a prop. This would make sense if you wanted the user to be able to pick the page size themselves.

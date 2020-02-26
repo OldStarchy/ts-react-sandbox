@@ -15,6 +15,7 @@ export interface TodoListState {
 		label: string;
 		checked: boolean;
 	}[];
+	page: number;
 }
 
 export default class TodoList extends React.Component<
@@ -24,10 +25,12 @@ export default class TodoList extends React.Component<
 	//Initialize the state based on the props
 	state = {
 		items: this.props.initialItems.map(item => ({ ...item })),
+		page: 1,
 	};
 
 	// Convert the title into something we can use in an ID attribute
 	id = this.props.title.replace(/[^a-zA-Z0-9]+/g, '-');
+	pageSize = 7;
 
 	toggleItem(label: string) {
 		let changed = false;
@@ -51,12 +54,25 @@ export default class TodoList extends React.Component<
 		}
 	}
 
+	switchToPage(page: number) {
+		this.setState({
+			...this.state,
+			page,
+		});
+	}
+
 	render() {
 		const { title } = this.props;
-		const { items } = this.state;
+		const { items, page } = this.state;
 
 		const uncheckedItemCount = items.filter(item => !item.checked).length;
 		const s = uncheckedItemCount === 1 ? '' : 's';
+
+		const pageCount = Math.ceil(items.length / this.pageSize);
+		const thisPageItems = items.slice(
+			(page - 1) * this.pageSize,
+			page * this.pageSize
+		);
 
 		return (
 			<div className="todo-list">
@@ -64,7 +80,7 @@ export default class TodoList extends React.Component<
 					{title} ({uncheckedItemCount} item{s})
 				</p>
 				<ul className="todo-list__items">
-					{items.map((item, index) => (
+					{thisPageItems.map((item, index) => (
 						<li className="todo-list__item">
 							<TodoItem
 								id={`${this.id}__Item-${index}`}
@@ -76,7 +92,11 @@ export default class TodoList extends React.Component<
 					))}
 				</ul>
 				<div className="todo-list__pagination">
-					<Pagination page={1} />
+					<Pagination
+						page={page}
+						pageCount={pageCount}
+						onSwitchPage={p => this.switchToPage(p)}
+					/>
 				</div>
 			</div>
 		);

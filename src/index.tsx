@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import TodoItem from './components/TodoItem';
 
 const App = () => (
 	<div className="app">
@@ -8,50 +9,13 @@ const App = () => (
 			<p className="todo-list__title">My Todo List</p>
 			<ul className="todo-list__items">
 				<li className="todo-list__item">
-					<div className="todo-item">
-						<input
-							className="todo-item__checkbox"
-							id="TodoItem-1"
-							type="checkbox"
-						/>
-						<label
-							className="todo-item__label"
-							htmlFor="TodoItem-1"
-						>
-							First Item
-						</label>
-					</div>
+					<TodoItem id={0} label="First Item" checked={false} />
 				</li>
 				<li className="todo-list__item">
-					<div className="todo-item">
-						<input
-							className="todo-item__checkbox"
-							id="TodoItem-2"
-							type="checkbox"
-						/>
-						<label
-							className="todo-item__label"
-							htmlFor="TodoItem-2"
-						>
-							Second Item
-						</label>
-					</div>
+					<TodoItem id={1} label="Second Item" checked={false} />
 				</li>
 				<li className="todo-list__item">
-					<div className="todo-item">
-						<input
-							className="todo-item__checkbox"
-							id="TodoItem-3"
-							type="checkbox"
-							checked
-						/>
-						<label
-							className="todo-item__label"
-							htmlFor="TodoItem-3"
-						>
-							Third Item
-						</label>
-					</div>
+					<TodoItem id={2} label="Third Item" checked={true} />
 				</li>
 			</ul>
 			<div className="todo-list__pagination">

@@ -19,4 +19,7 @@ module.exports = {
 			filename: 'index.html',
 		}),
 	],
+	resolve: {
+		extensions: ['.js', '.ts', '.tsx'],
+	},
 };

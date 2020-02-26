@@ -69,3 +69,17 @@ Its likely you've got some html already, or you might just find it to build out 
 So, now we add the basics required for a simple TODO list with pagination; some html put directly in the `App` component, and some styles added to `index.html`.
 
 Note a caveat with html in react, some keywords are reserved, so a few attributes have changed names, in this case we use `className` instead of `class` and `htmlFor` instead of `for`.
+
+### Breaking it down into components (TodoItem)
+
+Now we've got roughly what we want laid out, we should separate out the different parts of the html into their own components.
+
+For starters, lets move the `.todo-item` to its own component.
+
+Since we're operating in Typescript, we can explicitly declare the **properties** required by our component in the `TodoItemProps` interface.
+
+The `TodoItem` component itself is then defined as a function that takes an instance of `TodoItemProps` and renders some html based on the properties it was given.
+
+You may notice now though, that we can no longer check / uncheck the items. This is because we've now bound the `checked` property of the checkbox to the props passed to each item and react is going to try keep them in sync. We could instead use the `defaultChecked` property of the `<input>`, but instead of doing that, we'll leave it for now, as we're going handle the change events manually later on.
+
+Important: Now that we're going to be importing typescript files, we need to let webpack know how to find them (as imports don't explicitly add the extension). The webpack config has been updated to search for typescript files in addition to javascript ones.

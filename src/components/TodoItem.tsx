@@ -4,18 +4,20 @@ interface TodoItemProps {
 	id: string;
 	label: string;
 	checked: boolean;
+	onChange: JSX.IntrinsicElements['input']['onChange'];
 }
 
-const TodoItem = (props: TodoItemProps) => (
+const TodoItem = ({ id, label, checked, onChange }: TodoItemProps) => (
 	<div className="todo-item">
 		<input
 			className="todo-item__checkbox"
-			id={props.id}
+			id={id}
 			type="checkbox"
-			checked={props.checked}
+			checked={checked}
+			onChange={onChange}
 		/>
-		<label className="todo-item__label" htmlFor={props.id}>
-			{props.label}
+		<label className="todo-item__label" htmlFor={id}>
+			{label}
 		</label>
 	</div>
 );

@@ -29,6 +29,28 @@ export default class TodoList extends React.Component<
 	// Convert the title into something we can use in an ID attribute
 	id = this.props.title.replace(/[^a-zA-Z0-9]+/g, '-');
 
+	toggleItem(label: string) {
+		let changed = false;
+
+		const newTodoList = this.state.items.map(item => {
+			if (item.label === label) {
+				changed = true;
+				return {
+					label: item.label,
+					checked: !item.checked,
+				};
+			} else {
+				return item;
+			}
+		});
+
+		if (changed) {
+			this.setState({
+				items: [...newTodoList],
+			});
+		}
+	}
+
 	render() {
 		const { title } = this.props;
 		const { items } = this.state;
@@ -43,6 +65,7 @@ export default class TodoList extends React.Component<
 								id={`${this.id}__Item-${index}`}
 								label={item.label}
 								checked={item.checked}
+								onChange={() => this.toggleItem(item.label)}
 							/>
 						</li>
 					))}

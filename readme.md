@@ -101,3 +101,13 @@ Up till now all the components we've made have been defined as functions. They t
 Its definitely worth taking the time to understand what has changed in this step.
 
 `App` has been converted to a class, and now uses a state. It now takes (as props) a `title`, a todo list title `todoList.title` and an initial list of items to fill the list `todoList.initialItems`. Note that in its render function, it doesn't use the `todoList.initialItems` prop any more. Instead it creates a copy of that list in its state and uses that to render its todo list.
+
+### Updating state
+
+Now that we have the list of todo items in the state, we can update them.
+
+To toggle the checkboxes, we need to attach a callback to the input's `onChange` event. Since the state of the items is managed by the TodoList, not by each individual todo item, we can simply expose that `onChange` event to the list component by defining an `onChange` event for the todo item itself, and attach that to the input.
+
+Now, in the todo list, when we render each item, we can create a callback to call our new `toggleItem` method that will update the state.
+
+Its important to know that a component state is immutable, so instead of just updating the individual item property, we rebuild a new state object, deeply cloning the original one, adding the changes we want to make in the process. Keeping the state immutable allows react to be very fast and efficient when determining weather or not a component needs to be re-rendered.

@@ -31,3 +31,7 @@ Typescript also requires a config file, set it up to target "ES5" which is safe 
 
 From now, running `webpack` will build the output `dist/main.js` file.
 It may be a good idea to keep the dist files in the repository to prevent the need for a build step during automatic deployments, but for now they'll be ignored.
+
+### Add a basic html page for testing
+
+An empty `index.html` and modify the `ts` to show some output on the page when loaded. Remember to rebuild after changing `main.ts` file.

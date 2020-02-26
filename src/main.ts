@@ -1,3 +1,3 @@
 const text: string = 'Hello, world.';
 
-console.log(text);
+document.getElementsByTagName('h1')[0].innerText = text;

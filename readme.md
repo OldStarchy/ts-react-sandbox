@@ -2,7 +2,7 @@
 
 ### Init Git
 
-```
+```bash
 git init
 git add -A
 git commit -m "Initial commit with readme"
@@ -45,3 +45,19 @@ The typescript config has also been updated to allow react.
 A simple react component has been created called `App`. Its in the `index.tsx` file for now for simplicity, but if it gets larger, it should be moved to its own component.
 
 As you're making changes to the typescript, you can run `webpack -w` to automatically rebuild on save.
+
+### Add webpack dev server
+
+Now we're doing a bit more development, it would be good to get this going.
+In order for this to work fully though, we need to move `index.html` into our build process so `webpack-dev-server` can see it.
+
+```bash
+yarn add webpack-dev-server html-webpack-plugin
+```
+
+`index.html` has been moved into `src` and its script tag has been removed. the `html-webpack-plugin` will automatically add the script tags in for us.
+
+A the html plugin has been added to the webpack configuration.
+
+In addition to adding the dev server, we've also now got some scripts defined in `package.json` to start the server, run build, and run watch.
+These can be executed by `yarn dev`, `yarn build`, and `yarn watch`, etc.

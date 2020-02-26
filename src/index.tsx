@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import App, { AppProps } from './components/App';
 import ItemService from './ItemService';
 
-const rootDiv = document.getElementById('react-root');
+const rootDiv = document.getElementById('ReactRoot');
 
 if (rootDiv === undefined) {
 	throw new Error('Missing react-root div');

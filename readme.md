@@ -61,3 +61,11 @@ A the html plugin has been added to the webpack configuration.
 
 In addition to adding the dev server, we've also now got some scripts defined in `package.json` to start the server, run build, and run watch.
 These can be executed by `yarn dev`, `yarn build`, and `yarn watch`, etc.
+
+### Add the basic structure for our app
+
+Its likely you've got some html already, or you might just find it to build out plain html from your designs before diving into react.
+
+So, now we add the basics required for a simple TODO list with pagination; some html put directly in the `App` component, and some styles added to `index.html`.
+
+Note a caveat with html in react, some keywords are reserved, so a few attributes have changed names, in this case we use `className` instead of `class` and `htmlFor` instead of `for`.

@@ -4,6 +4,47 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>React Sandbox</title>
+
+		<style>
+			.todo-list {
+				border: 1px solid black;
+				max-width: 300px;
+			}
+
+			.todo-list__title {
+				font-size: 24px;
+				margin: 0.5em;
+			}
+
+			.todo-list__items {
+				list-style: none;
+				padding: 0;
+				border-top: 1px solid #ddd;
+			}
+
+			.todo-list__item {
+				border-bottom: 1px solid #ddd;
+			}
+
+			.todo-item {
+				display: flex;
+			}
+			.todo-item__checkbox {
+				width: 1em;
+			}
+			.todo-item__label {
+				flex-grow: 1;
+			}
+
+			.pagination {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.pagination__page {
+				margin: 0;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="react-root"></div>

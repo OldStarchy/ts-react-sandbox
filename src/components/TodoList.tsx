@@ -55,9 +55,14 @@ export default class TodoList extends React.Component<
 		const { title } = this.props;
 		const { items } = this.state;
 
+		const uncheckedItemCount = items.filter(item => !item.checked).length;
+		const s = uncheckedItemCount === 1 ? '' : 's';
+
 		return (
 			<div className="todo-list">
-				<p className="todo-list__title">{title}</p>
+				<p className="todo-list__title">
+					{title} ({uncheckedItemCount} item{s})
+				</p>
 				<ul className="todo-list__items">
 					{items.map((item, index) => (
 						<li className="todo-list__item">

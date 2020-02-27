@@ -149,3 +149,84 @@ Whenever you have a list of items in react, its important to make sure each one 
 The side effect of this is negligible in this case, but what it means is that the first item on every page will reuse the same DOM elements, as will the second, and third, and so on, rather than creating new DOM elements for each item.
 
 This distinction can be a real pain if you're not aware of it, especially when you've got some other things going on with those elements outside of react, like jquery-bound events, or `<input type="file">` elements whose value cannot be changed by scripts. Having react reuse one upload input for another will definitely cause you some headaches, so its important to choose keys carefully and consistently, so that each one can be uniquely identified by it.
+
+### Other Pages
+
+If you looked in `./dist/index.js` up till now you'll see its kinda big as it includes all the dependencies. If you wanted to add a second page + script that also used react, it would make sense to have the common dependencies split into its own file.
+
+In this step I've duplicated `index.tsx` into `other.tsx` and made some tweaks to the titles.
+
+Before we get further in to this, its important to clarify some terms
+
+-   Module: A self contained package of code. This could be a package installed by `yarn` or `npm` but it also includes your own source files that are _imported_ into other files, such as `TodoItem.tsx`
+-   Chunk: A group of Modules linked together by the dependency graph. `TodoList.tsx` requires `TodoItem.tsx`, `Pagination.tsx`, and `ItemService.ts` (and the `react` module and all its dependencies). By default, the Chunks will have a 1 to 1 relation with Bundles.
+-   Bundle: A final output file, it will consist of one or more Chunks.
+
+Up till now, there has been 1 Bundle, `index.js`, it is defined in the webpack config with the entry `index.tsx`.
+
+Webpack starts (enters) with `index.tsx` and collects all **modules** in the dependency tree to create a **chunk**, that chunk is then transpiled and output to the `index.js` **bundle**.
+
+Now we have two entry points, `index.tsx` and `other.tsx`. What the `splitChunks` optimization does, is once the dependency graphs have been built for each (and two chunks have been created, one for each), it will find the common modules between the two chunks, and move (split) them into a new chunk, which then gets output as the `vendor.js` bundle.
+
+Exactly how it chooses which chunks to split can be configured in the webpack config. One way to do it would be to test if the modules come from the `node_modules` folder.
+
+```javascript
+{
+	splitChunks: {
+		chunks: 'all',
+		cacheGroups: {
+			vendor: {
+				test: /[\\\/]node_modules[\\\/]/,
+				priority: -10,
+				name: 'vendor',
+			},
+		},
+	},
+}
+```
+
+However this still duplicates our own code in our source directory, if you look in the two output bundles (`index.js` and `other.js`) you'll see that they both contain the code for all our components and other source files inside `src`. Depending on your project, this may be a good solution, but personally I would rather not have any repeated code.
+
+I've found two good alternatives that will not duplicate our modules in the bundles.
+
+The first is taking _everything that is not an entry_ and putting that in the vendor bundle.
+
+```javascript
+{
+	splitChunks: {
+		chunks: 'all',
+		cacheGroups: {
+			vendor: {
+				test: module => !module.isEntryModule(),
+				priority: -10,
+				name: 'vendor',
+			},
+		},
+	},
+}
+```
+
+We're one step closer. No code is repeated and you could stop here. However, I've added a function `foo` that is only used by `other.tsx`. Its not required by `index.tsx` but since its in the vendor bundle, it gets loaded with `index.tsx` even when it's not used.
+
+So the second alternative is to check if the module has been used in more than one place.
+
+```javascript
+{
+	splitChunks: {
+		chunks: 'all',
+		cacheGroups: {
+			vendor: {
+				test: module => module.getChunks().length > 1,
+				priority: -10,
+				name: 'vendor',
+			},
+		},
+	},
+}
+```
+
+Note that this test is happening _before_ splitting the existing chunks defined by the entry points, so the module could used in either `index`, `other`, or both `index` and `other`. By splitting off any module used in more than one chunk, the function `foo` (which belongs to only the `other` chunk) stays in the `other` chunk. This way its not included in `vendor` and won't be included on pages where its not used.
+
+There are a number of ways to do splitting of chunks. Perhaps you have 3 or more entry points, your dependencies will become more complicated. For this you could create multiple different `vendor` bundles, or just ignore it. You could create one vendor bundle that includes a bunch of polyfills gets served only to IE, while a slimmer vendor bundle is used for Chrome and FireFox. Its also possible to split chunks that are larger than a particular size. You need to draw a line somewhere on how complex you're willing to go with this.
+
+I think the second alternative above is going to be _good enough_ for most things, even if you have a few entry points, the benefit for creating multiple vendor bundles becomes counter productive.

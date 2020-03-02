@@ -230,3 +230,17 @@ Note that this test is happening _before_ splitting the existing chunks defined 
 There are a number of ways to do splitting of chunks. Perhaps you have 3 or more entry points, your dependencies will become more complicated. For this you could create multiple different `vendor` bundles, or just ignore it. You could create one vendor bundle that includes a bunch of polyfills gets served only to IE, while a slimmer vendor bundle is used for Chrome and FireFox. Its also possible to split chunks that are larger than a particular size. You need to draw a line somewhere on how complex you're willing to go with this.
 
 I think the second alternative above is going to be _good enough_ for most things, even if you have a few entry points, the benefit for creating multiple vendor bundles becomes counter productive.
+
+### Source Maps
+
+We've gone so far without this since the code hasn't been _too_ crazy and its not impossible to debug this without source maps, but its worth doing this properly.
+
+Currently, the path between our TypeScript source code and our output bundles involves two steps:
+
+```text
+TypeScript Modules ==[TypeScript Transpiler]=>> JavaScript Modules ==[Webpack]=>> Bundled JavaScript
+```
+
+To get source maps working, we need to enable them for both the TypeScript and Webpack, each can be configured in the respective config files.
+
+There are often multiple steps involved in build setups like this, so you often need to enable the source map on every level.

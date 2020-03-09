@@ -1,0 +1,11 @@
+.todo-item {
+	display: flex;
+
+	&__checkbox {
+		width: 1em;
+	}
+
+	&__label {
+		flex-grow: 1;
+	}
+}

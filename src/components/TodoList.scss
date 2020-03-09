@@ -1,0 +1,19 @@
+.todo-list {
+	border: 1px solid black;
+	max-width: 300px;
+
+	&__title {
+		font-size: 24px;
+		margin: 0.5em;
+	}
+
+	&__items {
+		list-style: none;
+		padding: 0;
+		border-top: 1px solid #ddd;
+	}
+
+	&__item {
+		border-bottom: 1px solid #ddd;
+	}
+}

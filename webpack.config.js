@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /**
  * @type {import('webpack').Configuration}
@@ -6,14 +7,18 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
 	mode: 'development',
 	entry: {
-		index: './src/index.tsx',
-		other: './src/other.tsx',
+		index: './src/pages/index.tsx',
+		other: './src/pages/other.tsx',
 	},
 	module: {
 		rules: [
 			{
 				test: /\.tsx?$/,
 				use: 'ts-loader',
+			},
+			{
+				test: /\.scss$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
 			},
 		],
 	},
@@ -28,9 +33,10 @@ module.exports = {
 			filename: 'other.html',
 			chunks: ['vendor', 'other'],
 		}),
+		new MiniCssExtractPlugin(),
 	],
 	resolve: {
-		extensions: ['.js', '.ts', '.tsx'],
+		extensions: ['.js', '.ts', '.tsx', '.scss'],
 	},
 	optimization: {
 		splitChunks: {

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import App, { AppProps } from './components/App';
-import ItemService from './ItemService';
+import App, { AppProps } from '../components/App';
+import ItemService from '../ItemService';
+import './common.scss';
 
 const rootDiv = document.getElementById('ReactRoot');
 

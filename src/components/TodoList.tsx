@@ -1,7 +1,8 @@
 import * as React from 'react';
-import TodoItem from './TodoItem';
-import Pagination from './Pagination';
 import ItemService from '../ItemService';
+import Pagination from './Pagination';
+import TodoItem from './TodoItem';
+import './TodoList.scss';
 
 export interface TodoListProps {
 	title: string;

@@ -1,0 +1,5 @@
+@import '../components/App.scss';
+
+.foo::before {
+	content: 'I am unique to the Other page';
+}
